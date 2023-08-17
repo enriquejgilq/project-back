@@ -2,8 +2,22 @@ import Jobs from '../models/jobs.model.js'
 
 
 export const getJobs = async (req, res) => {
-    const jobs = await Jobs.find({ user: req.user.id })
-    res.json(jobs)
+
+    try {
+        const jobs = await Jobs.find({ user: req.user.id })
+
+        if (!jobs) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
+
+        res.json(jobs);
+    } catch (error) {
+        console.error('Error in getJob:', error);
+        res.status(500).json({ message: 'An error occurred' });
+    }
+
+
+
 }
 export const createJobs = async (req, res) => {
     const { title, description, images, technologies, link } = req.body
@@ -20,21 +34,44 @@ export const createJobs = async (req, res) => {
 }
 
 export const getJob = async (req, res) => {
-    const jobs = await Jobs.findById(req.params.id)
-    if (!jobs) return res.status(404).json({ message: 'job not found' })
-    res.json(jobs)
+    try {
+        const job = await Jobs.findById(req.params.id);
 
-}
+        if (!job) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
 
+        res.json(job);
+    } catch (error) {
+        console.error('Error in getJob:', error);
+        res.status(500).json({ message: 'An error occurred' });
+    }
+};
 export const deleteJobs = async (req, res) => {
-    const jobs = await Jobs.findByIdAndDelete(req.params.id)
-    if (!jobs) return res.status(404).json({ message: 'job not found' })
-    return res.sendStatus(204)
+    try {
+        const job = await Jobs.findByIdAndDelete(req.params.id)
+        if (!job) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
+        res.json(job);
+    } catch (error) {
+        console.error('Error in getJob:', error);
+        res.status(500).json({ message: 'An error occurred' });
+    }
+
 }
 export const updatejobs = async (req, res) => {
-    const jobs = await Jobs.findByIdAndUpdate(req.params.id, req.body, { new: true })
-    if (!jobs) return res.status(404).json({ message: 'job not found' })
-    res.json({ message: 'job update!', jobs: jobs })
+
+    try {
+        const jobs = await Jobs.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        if (!jobs) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
+        res.json(jobs);
+    } catch (error) {
+        console.error('Error in getJob:', error);
+        res.status(500).json({ message: 'An error occurred' });
+    }
 
 }
 
@@ -48,12 +85,13 @@ export const getAlljobssById = async (req, res) => {
             description: jobs.description,
             technologies: jobs.technologies,
             link: jobs.link,
+            images: jobs.images,
             createdAt: jobs.createdAt,
             updatedAt: jobs.updatedAt
         }));
         res.json(jobsData);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'user jobs not found' });
+        res.status(500).json({ message: 'User not found' });
     }
 };

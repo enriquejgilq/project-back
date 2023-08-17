@@ -5,17 +5,28 @@ import jwt from 'jsonwebtoken'
 import { TOKEN_SECRET } from '../config.js'
 
 
+
+
 export const register = async (req, res) => {
 
-    const { email, password, userName } = req.body
+    const { email, password, userName, works, nickName, socialMedia } = req.body
     try {
-        const userFound = await User.findOne({ email })
-        if (userFound) return res.status(400).json(['The email already exists'])
+        const userFound = await User.findOne({
+            $or: [
+                { email: email }, // Search by email
+                { nickName: nickName } // Search by nickname
+            ]
+        });
+        if (userFound) return res.status(400).json(['The user already exists'])
         const passwordHash = await bcrypt.hash(password, 10)
         const newUser = new User({
             userName,
             email,
+            works,
+            nickName,
+            socialMedia,
             password: passwordHash
+
         })
 
         const userSaved = await newUser.save()
@@ -24,7 +35,10 @@ export const register = async (req, res) => {
         res.json({
             id: userSaved._id,
             userName: userSaved.userName,
+            nickName: userSaved.nickName,
             email: userSaved.email,
+            works: userSaved.works,
+            socialMedia: userSaved.socialMedia,
             createdAt: userSaved.createdAt,
             updateAt: userSaved.updatedAt,
             success: true
@@ -50,6 +64,8 @@ export const login = async (req, res) => {
             id: userFound._id,
             userName: userFound.userName,
             email: userFound.email,
+            works: userFound.works,
+            socialMedia: userFound.socialMedia,
             createdAt: userFound.createdAt,
             updateAt: userFound.updatedAt,
             success: true
@@ -92,3 +108,52 @@ export const verifyToken = async (req, res) => {
 
     })
 }
+
+export const findUserProfile = async (req, res) => {
+    const { nickname } = req.params;
+    try {
+        const userFound = await User.findOne({
+            $or: [{ nickName: nickname }]
+        });
+
+        if (!userFound) {
+            return res.status(400).json(["User not found"]);
+        }
+
+        res.json({
+            id: userFound._id,
+            userName: userFound.userName,
+            works: userFound.works,
+            socialMedia: userFound.socialMedia,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const findUserById = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const userFound = await User.findById(id);
+
+        if (!userFound) {
+            return res.status(400).json(["User not found"]);
+        }
+
+        res.json({
+            id: userFound._id,
+            userName: userFound.userName,
+            email: userFound.email,
+            works: userFound.works,
+            createdAt: userFound.createdAt,
+            updatedAt: userFound.updatedAt,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+
