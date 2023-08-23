@@ -30,7 +30,7 @@ export const register = async (req, res) => {
         })
 
         const userSaved = await newUser.save()
-        const token = await createAccessToken({ id: userSaved._id })
+        const token = await createAccessToken({ id: userSaved._id, nickName: userSaved.nickName })
         res.cookie("token", token)
         res.json({
             id: userSaved._id,
@@ -57,14 +57,14 @@ export const login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, userFound.password)
         if (!isMatch) return res.status(400).json(['Incorrect password'])
 
-
-        const token = await createAccessToken({ id: userFound._id })
+        const token = await createAccessToken({ id: userFound._id, nickName: userFound.nickName })
         res.cookie("token", token)
         res.json({
             id: userFound._id,
             userName: userFound.userName,
             email: userFound.email,
             works: userFound.works,
+            nickName: userFound.nickName,
             socialMedia: userFound.socialMedia,
             createdAt: userFound.createdAt,
             updateAt: userFound.updatedAt,
@@ -122,6 +122,7 @@ export const findUserProfile = async (req, res) => {
 
         res.json({
             id: userFound._id,
+            nickName: userFound.nickName,
             userName: userFound.userName,
             works: userFound.works,
             socialMedia: userFound.socialMedia,
