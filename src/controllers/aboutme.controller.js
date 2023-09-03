@@ -1,4 +1,6 @@
 import AboutMe from '../models/aboutme.model.js'
+import { uploadImg, deleteImage } from '../utils/cloudinary.js'
+import fs from 'fs-extra'
 
 export const getAllAboutme = async (req, res) => {
 
@@ -22,7 +24,6 @@ export const getAllAboutme = async (req, res) => {
     }
 }
 
-
 export const getAboutme = async (req, res) => {
 
     try {
@@ -40,41 +41,53 @@ export const getAboutme = async (req, res) => {
 }
 
 export const getAboutmePublic = async (req, res) => {
-
+    const { nickname } = req.params;
     try {
-        const about = await AboutMe.findOne({ nickName: req.params.nickname })
-            .sort({ createdAt: -1 })
-            .limit(1);
-        if (!about) {
-            return res.status(404).json(['No information found for the given nickname']);
+        const latestAboutMe = await AboutMe.findOne({
+            nickName: nickname
+        }).sort({ _id: -1 });
+
+        if (!latestAboutMe) {
+            return res.status(400).json(["No data found for the provided nickname"]);
         }
         const aboutMeData = {
-            id: about._id,
-            description: about.description,
-            images: about.images,
-            other: about.other,
-            nickName: about.nickName
+            id: latestAboutMe._id,
+            description: latestAboutMe.description,
+            images: latestAboutMe.images,
+            other: latestAboutMe.other,
+            nickName: latestAboutMe.nickName
         };
+
         res.json(aboutMeData);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "An error occurred while fetching the information." });
     }
 }
-export const createAboutMe = async (req, res) => {
 
-    const { description, images, other } = req.body
+export const createAboutMe = async (req, res) => {
+    const { description, other } = req.body;
     try {
         const newAboutme = new AboutMe({
-            description, images, other,
-            user: req.user.id, nickName: req.user.nickName,
-        })
-        const savedAboutme = await newAboutme.save()
-        res.json({ success: true, savedAboutme })
+            description,
+            other,
+            user: req.user.id,
+            nickName: req.user.nickName,
+        });
+
+        if (req.files?.images) {
+            const imageResult = await uploadImg(req.files.images.tempFilePath);
+            newAboutme.images = { image: imageResult.secure_url, id: imageResult.public_id };
+            await fs.unlink(req.files?.images.tempFilePath);
+        }
+        const savedAboutMe = await newAboutme.save();
+        const hola = 'hola'
+        res.json({ success: true, hola });
     } catch (error) {
-        res.status(409).json({ 'message': error.message })
+        res.status(409).json({ message: error.message });
     }
-}
+};
+
 export const deleteAboutMe = async (req, res) => {
 
     try {
@@ -88,7 +101,6 @@ export const deleteAboutMe = async (req, res) => {
         res.status(500).json({ message: 'An error occurred' });
     }
 }
-
 
 export const updateAboutme = async (req, res) => {
 

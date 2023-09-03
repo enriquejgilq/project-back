@@ -6,12 +6,12 @@ import { loginSchema, registerSchema } from '../schemas/auth.schema.js'
 
 
 const router = Router()
-
+router.get('/profileuser/:nickname', findUserProfile)
+router.get('/findbyid/:id', findUserById)
+router.get('/profile', authRequired, profile)
+router.get('/verify', verifyToken)
 router.post('/register', validateSchema(registerSchema), register)
 router.post('/login', validateSchema(loginSchema), login)
 router.post('/logout', logout)
-router.get('/profile', authRequired, profile)
-router.get('/verify', verifyToken)
-router.get('/profileuser/:nickname', findUserProfile)
-router.get('/findbyid/:id', findUserById)
+
 export default router

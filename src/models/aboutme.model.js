@@ -5,19 +5,19 @@ const aboutmeSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    other: {
+        type: String,
+        trim: true,
+    },
     images: {
-        secure_url: String,
-        public_id: String
+        type: Array
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    other: {
-        type: String,
-        trim: true,
-    },
+
     nickName: {
         type: String,
         required: true

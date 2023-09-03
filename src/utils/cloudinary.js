@@ -1,13 +1,12 @@
+import 'dotenv/config'
 import { v2 as cloudinary } from 'cloudinary';
 
-const name = process.env.NAME_CLOUD
-const key = process.env.API_KEY
-const secret = process.env.KEY_SECRET
+
 
 cloudinary.config({
-    cloud_name: 'dfbvdqe4h',
-    api_key: '734757915862827',
-    api_secret: 'We2CnKkO5slL4Af7zB0KkXZamZ8'
+    cloud_name: process.env.NAME_CLOUD,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.KEY_SECRET
 });
 
 
@@ -21,6 +20,15 @@ export const uploadImg = async (filePath) => {
         throw new Error('Error uploading image to Cloudinary');
     }
 
+}
+
+export const deleteImage = async (publicId) => {
+    try {
+        return await cloudinary.uploader.destroy(publicId)
+    }
+    catch (error) {
+        throw new Error('Error uploading image to Cloudinary');
+    }
 }
 
 
