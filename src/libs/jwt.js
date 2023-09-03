@@ -1,6 +1,5 @@
 import 'dotenv/config'
 import jwt from 'jsonwebtoken'
-import { TOKEN_SECRET } from '../config.js'
 
 
 
