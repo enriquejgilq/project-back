@@ -10,9 +10,9 @@ import cookieParser from 'cookie-parser';
 
 const app = express()
 if (process.env.NODE_ENV === 'production') {
-    app.use(cors({ origin: process.env.CORS_ORIGIN_PROD, credentials: true }))
+    app.use(cors({ origin: process.env.CORS_ORIGIN_PROD, credentials: true, methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', }))
 } else {
-    app.use(cors({ origin: process.env.CORS_ORIGIN_DEV, credentials: true }))
+    app.use(cors({ origin: process.env.CORS_ORIGIN_DEV, credentials: true, methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', }))
 }
 
 
