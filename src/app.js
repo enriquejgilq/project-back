@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser';
 
 const app = express()
 if (process.env.NODE_ENV === 'production') {
-    app.use(cors({ origin: 'https://project-front-teal.vercel.app', credentials: true }))
+    app.use(cors({ origin: process.env.CORS_ORIGIN_PROD, credentials: true }))
 } else {
     app.use(cors({ origin: process.env.CORS_ORIGIN_DEV, credentials: true }))
 }
