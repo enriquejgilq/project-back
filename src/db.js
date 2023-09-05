@@ -10,13 +10,12 @@ export const connectDB = async () => {
                     useUnifiedTopology: true,
                 })
             } catch (error) {
-                console.log(error);
+                console.log(' error 1', error);
             }
         } else {
             await mongoose.connect(`${process.env.BD_DEV}`)
         }
     } catch (error) {
-        console.log(error)
-        console.log(error)
+        console.log(' error 2', error);
     }
 };
