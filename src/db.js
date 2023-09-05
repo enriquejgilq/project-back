@@ -14,11 +14,11 @@ export const connectDB = async () => {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
             });
-            console.log(conected)
 
             //   await mongoose.connect(`${process.env.BD_DEV}`)
         }
     } catch (error) {
+        console.log(error)
         console.log(error)
     }
 };

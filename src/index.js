@@ -2,7 +2,7 @@ import 'dotenv/config';
 import app from './app.js';
 import { connectDB } from './db.js';
 
-const PORT = process.env.NODE_ENV === 'production' ? process.env.PORT : process.env.PORT_DEV;
+const PORT = process.env.NODE_ENV === 'production' ? process.env.PORT || 8080 : process.env.PORT_DEV;
 
 async function startServer() {
     try {
