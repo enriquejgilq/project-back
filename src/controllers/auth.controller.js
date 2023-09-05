@@ -120,7 +120,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     const { email, password } = req.body
     try {
-        const userFound = await User.findOne({ email }).maxTimeMS(15000); // Agregar 15000 ms (15 segundos) de tiempo de espera
+        const userFound = await User.findOne({ email }).maxTimeMS(60000); // Agregar 15000 ms (15 segundos) de tiempo de espera
         if (!userFound) return res.status(400).json(["User not found"])
 
         const isMatch = await bcrypt.compare(password, userFound.password)

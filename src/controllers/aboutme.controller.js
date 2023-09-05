@@ -43,9 +43,13 @@ export const getAboutme = async (req, res) => {
 export const getAboutmePublic = async (req, res) => {
     const { nickname } = req.params;
     try {
+        const options = {
+            maxTimeMS: 30000, // Establece un tiempo de espera máximo de 30 segundos (30000 ms)
+        };
+
         const latestAboutMe = await AboutMe.findOne({
             nickName: nickname
-        }).sort({ _id: -1 });
+        }).sort({ _id: -1 }, options);
 
         if (!latestAboutMe) {
             return res.status(400).json(["No data found for the provided nickname"]);
