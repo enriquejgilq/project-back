@@ -1,15 +1,18 @@
-import 'dotenv/config'
-import app from './app.js'
-import { connectDB } from './db.js'
+import 'dotenv/config';
+import app from './app.js';
+import { connectDB } from './db.js';
 
-connectDB();
-if (process.env.NODE_ENV === 'production') {
-    app.listen(process.env.PORT)
-    console.log('server on port', process.env.PORT)
-} else {
-    app.listen(process.env.PORT_DEV)
-    console.log('server on port', process.env.PORT_DEV)
+const PORT = process.env.NODE_ENV === 'production' ? process.env.PORT : process.env.PORT_DEV;
+
+async function startServer() {
+    try {
+        await connectDB();
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Error starting the server:', error);
+    }
 }
 
-
-
+startServer();
