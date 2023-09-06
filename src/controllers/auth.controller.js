@@ -129,6 +129,7 @@ export const login = async (req, res) => {
         if (!isMatch) return res.status(400).json(['Incorrect password'])
 
         const token = await createAccessToken({ id: userFound._id, nickName: userFound.nickName })
+        console.log('<<<', token)
         res.cookie('token', token, {
             domain: process.env.NODE_ENV === 'production' ? process.env.CORS_ORIGIN_PROD : process.env.CORS_ORIGIN_DEV,
             secure: false, // Solo enviará la cookie a través de HTTPS si estás en producción
