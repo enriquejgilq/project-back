@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken'
 
 export const verifyToken = async (req, res) => {
     const { token } = req.cookies
+    console.log(req.cookies)
     if (!token) return res.status(401).json(["It's not authorized 1"])
     jwt.verify(token, process.env.TOKEN_SECRET, async (err, user) => {
         if (err) return res.status(401).json(["It's not authorized 2"])
