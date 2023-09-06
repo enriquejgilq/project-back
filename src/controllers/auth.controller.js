@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken'
 
 export const verifyToken = async (req, res) => {
     const { token } = req.cookies
-    console.log(req.cookies)
     if (!token) return res.status(401).json(["It's not authorized 1"])
     jwt.verify(token, process.env.TOKEN_SECRET, async (err, user) => {
         if (err) return res.status(401).json(["It's not authorized 2"])
@@ -130,7 +129,12 @@ export const login = async (req, res) => {
         if (!isMatch) return res.status(400).json(['Incorrect password'])
 
         const token = await createAccessToken({ id: userFound._id, nickName: userFound.nickName })
-        res.cookie("token", token)
+        if (process.env.NODE_ENV === 'production') {
+            res.cookie('token', token, { domain: process.env.CORS_ORIGIN_PROD, /* otras opciones */ });
+        } else {
+            res.cookie('token', token, { domain: process.env.CORS_ORIGIN_DEV, /* otras opciones */ });
+
+        }
         res.json({
             id: userFound._id,
             userName: userFound.userName,
