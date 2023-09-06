@@ -129,12 +129,13 @@ export const login = async (req, res) => {
         if (!isMatch) return res.status(400).json(['Incorrect password'])
 
         const token = await createAccessToken({ id: userFound._id, nickName: userFound.nickName })
-        if (process.env.NODE_ENV === 'production') {
-            res.cookie('token', token, { domain: process.env.CORS_ORIGIN_PROD, /* otras opciones */ });
-        } else {
-            res.cookie('token', token, { domain: process.env.CORS_ORIGIN_DEV, /* otras opciones */ });
+        res.cookie('token', token, {
+            domain: process.env.NODE_ENV === 'production' ? process.env.CORS_ORIGIN_PROD : process.env.CORS_ORIGIN_DEV,
+            secure: true, // Solo enviará la cookie a través de HTTPS si estás en producción
+            httpOnly: true, // Impide que el cliente acceda a la cookie a través de JavaScript
+            sameSite: 'strict', // Mejora la seguridad estableciendo SameSite en 'Strict'
 
-        }
+        });
         res.json({
             id: userFound._id,
             userName: userFound.userName,
