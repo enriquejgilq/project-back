@@ -131,8 +131,8 @@ export const login = async (req, res) => {
         const token = await createAccessToken({ id: userFound._id, nickName: userFound.nickName })
         res.cookie('token', token, {
             domain: process.env.NODE_ENV === 'production' ? process.env.CORS_ORIGIN_PROD : process.env.CORS_ORIGIN_DEV,
-            secure: true, // Solo enviará la cookie a través de HTTPS si estás en producción
-            httpOnly: true, // Impide que el cliente acceda a la cookie a través de JavaScript
+            secure: false, // Solo enviará la cookie a través de HTTPS si estás en producción
+            httpOnly: false, // Impide que el cliente acceda a la cookie a través de JavaScript
             sameSite: 'strict', // Mejora la seguridad estableciendo SameSite en 'Strict'
 
         });
