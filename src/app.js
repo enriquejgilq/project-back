@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser';
 
 
 const app = express()
-
+app.use(cookieParser())
 if (process.env.NODE_ENV === 'production') {
     app.use(cors({
         origin: true,
@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
     app.use(cors({ origin: process.env.CORS_ORIGIN_DEV, credentials: true, methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', }))
 }
-app.use(cookieParser())
+
 app.use(morgan("dev"));
 app.use(express.json())
 
