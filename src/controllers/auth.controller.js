@@ -6,11 +6,11 @@ import jwt from 'jsonwebtoken'
 
 export const verifyToken = async (req, res) => {
     const { token } = req.cookies
-    if (!token) return res.status(401).json(["It's not authorized"])
+    if (!token) return res.status(401).json(["It's not authorized 1"])
     jwt.verify(token, process.env.TOKEN_SECRET, async (err, user) => {
-        if (err) return res.status(401).json(["It's not authorized"])
+        if (err) return res.status(401).json(["It's not authorized 2"])
         const userFound = await User.findById(user.id)
-        if (!userFound) return res.status(401).json(["It's not authorized"])
+        if (!userFound) return res.status(401).json(["It's not authorized 3"])
         return res.json({
             id: userFound._id,
             userName: userFound.userName,
