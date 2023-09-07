@@ -5,21 +5,30 @@ import { createAccessToken } from '../libs/jwt.js'
 import jwt from 'jsonwebtoken'
 
 export const verifyToken = async (req, res) => {
-    const authorizationHeader = req.headers['token'];
-    if (!authorizationHeader) return res.status(401).json(["It's not authorized 1"])
-    jwt.verify(authorizationHeader, process.env.TOKEN_SECRET, async (err, user) => {
-        if (err) return res.status(401).json(["It's not authorized 2"])
-        const userFound = await User.findById(user.id)
-        if (!userFound) return res.status(401).json(["It's not authorized 3"])
+    const authorizationHeader = req.headers['authorization'];
+
+    // Verifica si se incluyó el encabezado de autorización
+    if (!authorizationHeader) return res.status(401).json(["It's not authorized 1"]);
+
+    // Divide el encabezado de autorización para obtener el token
+    const token = authorizationHeader.split(' ')[1];
+
+    // Verifica el token
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, user) => {
+        if (err) return res.status(401).json(["It's not authorized 2"]);
+
+        const userFound = await User.findById(user.id);
+        if (!userFound) return res.status(401).json(["It's not authorized 3"]);
+
         return res.json({
             id: userFound._id,
             userName: userFound.userName,
             email: userFound.email,
-            token: authorizationHeader
-        })
-
-    })
+            token: token
+        });
+    });
 }
+
 
 export const findUserProfile = async (req, res) => {
     const { nickname } = req.params;
