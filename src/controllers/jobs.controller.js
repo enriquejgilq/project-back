@@ -27,7 +27,7 @@ export const createJobs = async (req, res) => {
         const newJobs = new Jobs({
             title,
             description,
-            technologies,
+            technologies: technologies ? technologies.split(',') : [],
             link,
             user: req.user.id,
             nickName: req.user.nickName,

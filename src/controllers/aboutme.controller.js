@@ -43,31 +43,26 @@ export const getAboutme = async (req, res) => {
 export const getAboutmePublic = async (req, res) => {
     const { nickname } = req.params;
     try {
-        const options = {
-            maxTimeMS: 30000, // Establece un tiempo de espera máximo de 30 segundos (30000 ms)
-        };
+        const aboutme = await AboutMe.findOne({
+            $or: [{ nickName: nickname }]
+        });
 
-        const latestAboutMe = await AboutMe.findOne({
-            nickName: nickname
-        }).sort({ _id: -1 }, options);
-
-        if (!latestAboutMe) {
-            return res.status(400).json(["No data found for the provided nickname"]);
+        if (!aboutme) {
+            return res.status(400).json(["User not found"]);
         }
-        const aboutMeData = {
-            id: latestAboutMe._id,
-            description: latestAboutMe.description,
-            images: latestAboutMe.images,
-            other: latestAboutMe.other,
-            nickName: latestAboutMe.nickName
-        };
 
-        res.json(aboutMeData);
+        res.json({
+            id: aboutme._id,
+            description: aboutme.description,
+            images: aboutme.images,
+            other: aboutme.other,
+            nickName: aboutme.nickName,
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "An error occurred while fetching the information." });
+        res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 export const createAboutMe = async (req, res) => {
     const { description, other } = req.body;
@@ -85,8 +80,7 @@ export const createAboutMe = async (req, res) => {
             await fs.unlink(req.files?.images.tempFilePath);
         }
         const savedAboutMe = await newAboutme.save();
-        const hola = 'hola'
-        res.json({ success: true, hola });
+        res.json({ success: true, savedAboutMe });
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
