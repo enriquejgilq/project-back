@@ -46,11 +46,9 @@ export const getAboutmePublic = async (req, res) => {
         const aboutme = await AboutMe.findOne({
             $or: [{ nickName: nickname }]
         });
-
         if (!aboutme) {
             return res.status(400).json(["User not found"]);
         }
-
         res.json({
             id: aboutme._id,
             description: aboutme.description,
